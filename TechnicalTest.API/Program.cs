@@ -34,23 +34,18 @@ app.UseAuthorization();
 
 app.MapControllers();
 
+//User user = () =>
+//{
+
+//}
+//();
+
+int userId = 0;
+
+
 app.MapGet("/", () => "Hello world");
 
-int userID = 0;
 
-app.MapPost("/customers", async ([FromBody] AddCustomerModel customer, ApplicationContext db) =>
-{
-    db.Customers.Add((Customer)DateAndUserInfoUpdate.UpdateCreateInfo(new Customer
-    {
-        Name = customer.Name,
-        DateOfBirth = customer.DateOfBirth,
-        DailyTransferLimit = customer.DailyTransferLimit,
-    }, userID));
-
-    await db.SaveChangesAsync();
-     
-    return Results.Ok();
-});
 
 app.MapGet("/customers", (ApplicationContext db) =>
 {
@@ -66,7 +61,9 @@ app.MapGet("/customers-all", (ApplicationContext db) =>
         .Select(x => new
         {
             x.Id,
-            x.Name,
+            x.FirstName,
+            x.MiddleNames,
+            x.LastName,
             x.DateOfBirth,
             x.BankAccounts,
             x.DailyTransferLimit,
@@ -89,22 +86,39 @@ app.MapGet("/customers-deleted", (ApplicationContext db) =>
     return Results.Ok(customers);
 });
 
+app.MapPost("/customers", async ([FromBody] AddCustomerModel customer, ApplicationContext db) =>
+{
+    db.Customers.Add((Customer)DateAndUserInfoUpdate.UpdateCreateInfo(new Customer
+    {
+        FirstName = customer.FirstName,
+        MiddleNames = customer.MiddleNames,
+        LastName = customer.LastName,
+        DateOfBirth = customer.DateOfBirth,
+        DailyTransferLimit = customer.DailyTransferLimit,
+    }, userId));
+
+    await db.SaveChangesAsync();
+     
+    return Results.Ok();
+});
+
 
 app.MapPost("/customers-edit", async ([FromBody] Customer customer, ApplicationContext db) =>
 {
-    db.Customers.Update((Customer)DateAndUserInfoUpdate.UpdateUpdateInfo(customer, userID));
+    db.Customers.Update((Customer)DateAndUserInfoUpdate.UpdateUpdateInfo(customer, userId));
 
     await db.SaveChangesAsync();
 
     return Results.Ok();
 });
 
-
-
-app.MapPost("/customers-delete", async ([FromBody] Customer customer, ApplicationContext db) =>
+app.MapPost("/customers-delete", async ([FromBody] int id, ApplicationContext db) =>
 {
-    db.Customers.Update((Customer)DateAndUserInfoUpdate.UpdateDeleteInfo(customer, userID));
+    var customer = db.Customers.FirstOrDefault(x => x.Id == id);
+    if (customer == null || customer.DeletedByUserID != null)
+        return Results.Ok();
 
+    db.Customers.Update((Customer)DateAndUserInfoUpdate.UpdateDeleteInfo(customer, userId));
     await db.SaveChangesAsync();
 
     return Results.Ok();
