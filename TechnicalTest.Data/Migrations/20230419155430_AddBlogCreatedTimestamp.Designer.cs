@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TechnicalTest.Data;
 
@@ -10,14 +11,16 @@ using TechnicalTest.Data;
 namespace TechnicalTest.Data.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    partial class ApplicationContextModelSnapshot : ModelSnapshot
+    [Migration("20230419155430_AddBlogCreatedTimestamp")]
+    partial class AddCustomerFields
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "7.0.3");
 
-            modelBuilder.Entity("TechnicalTest.Data.Model.BankAccount", b =>
+            modelBuilder.Entity("TechnicalTest.Data.BankAccount", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -27,25 +30,7 @@ namespace TechnicalTest.Data.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<DateTime>("CreateDate")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("CreatedByUserID")
-                        .HasColumnType("INTEGER");
-
                     b.Property<int>("CustomerId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<DateTime?>("DeleteDate")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int?>("DeletedByUserID")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<DateTime>("UpdateDate")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("UpdatedByUserID")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
@@ -55,16 +40,10 @@ namespace TechnicalTest.Data.Migrations
                     b.ToTable("BankAccounts");
                 });
 
-            modelBuilder.Entity("TechnicalTest.Data.Model.Customer", b =>
+            modelBuilder.Entity("TechnicalTest.Data.Customer", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<DateTime>("CreateDate")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("CreatedByUserID")
                         .HasColumnType("INTEGER");
 
                     b.Property<decimal>("DailyTransferLimit")
@@ -73,30 +52,18 @@ namespace TechnicalTest.Data.Migrations
                     b.Property<DateTime>("DateOfBirth")
                         .HasColumnType("TEXT");
 
-                    b.Property<DateTime?>("DeleteDate")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int?>("DeletedByUserID")
-                        .HasColumnType("INTEGER");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("TEXT");
-
-                    b.Property<DateTime>("UpdateDate")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("UpdatedByUserID")
-                        .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
 
                     b.ToTable("Customers");
                 });
 
-            modelBuilder.Entity("TechnicalTest.Data.Model.BankAccount", b =>
+            modelBuilder.Entity("TechnicalTest.Data.BankAccount", b =>
                 {
-                    b.HasOne("TechnicalTest.Data.Model.Customer", "Customer")
+                    b.HasOne("TechnicalTest.Data.Customer", "Customer")
                         .WithMany("BankAccounts")
                         .HasForeignKey("CustomerId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -105,7 +72,7 @@ namespace TechnicalTest.Data.Migrations
                     b.Navigation("Customer");
                 });
 
-            modelBuilder.Entity("TechnicalTest.Data.Model.Customer", b =>
+            modelBuilder.Entity("TechnicalTest.Data.Customer", b =>
                 {
                     b.Navigation("BankAccounts");
                 });
