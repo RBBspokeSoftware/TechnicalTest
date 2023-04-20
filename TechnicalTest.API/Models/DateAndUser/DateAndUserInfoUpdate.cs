@@ -4,10 +4,10 @@ namespace TechnicalTest.API.Models.DateAndUser
 {
     public static class DateAndUserInfoUpdate
     {
-        public static BaseModel<T> UpdateCreateInfo<T>(BaseModel<T> obj, int userId) 
+        public static BaseModel<T> UpdateCreateInfo<T>(BaseModelCreate<IdType> obj, int userId) 
         {
-            obj.CreateDate = obj.UpdateDate =  DateTime.Now;
-            obj.CreatedByUserID = obj.UpdatedByUserID = userId;
+            obj.CreateDate =  DateTime.Now;
+            obj.CreatedByUserID  = userId;
             return obj;
         }
 

@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Runtime.CompilerServices;
+using Microsoft.AspNetCore.Http.HttpResults;
 using TechnicalTest.API.Models;
 using TechnicalTest.API.Models.DateAndUser;
 using TechnicalTest.Data;
@@ -34,94 +35,395 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-//User user = () =>
-//{
-
-//}
-//();
-
 int userId = 0;
-
 
 app.MapGet("/", () => "Hello world");
 
 
 
-app.MapGet("/customers", (ApplicationContext db) =>
+void MapDataModels()
 {
-    var customers = db.Customers
-      .Where(x => x.DeletedByUserID == null).ToList();
-
-    return Results.Ok(customers);
-});
-
-app.MapGet("/customers-all", (ApplicationContext db) =>
-{
-    var customers = db.Customers
-        .Select(x => new
-        {
-            x.Id,
-            x.FirstName,
-            x.MiddleNames,
-            x.LastName,
-            x.DateOfBirth,
-            x.BankAccounts,
-            x.DailyTransferLimit,
-            x.CreateDate,
-            x.CreatedByUserID,
-            x.UpdateDate,
-            x.UpdatedByUserID,
-            x.DeleteDate,
-            x.DeletedByUserID
-        }).ToList();
-
-    return Results.Ok(customers);
-});
-
-app.MapGet("/customers-deleted", (ApplicationContext db) =>
-{
-    var customers = db.Customers
-        .Where(x => x.DeletedByUserID != null).ToList();
-
-    return Results.Ok(customers);
-});
-
-app.MapPost("/customers", async ([FromBody] AddCustomerModel customer, ApplicationContext db) =>
-{
-    db.Customers.Add((Customer)DateAndUserInfoUpdate.UpdateCreateInfo(new Customer
+    // void AddCustomerMapping()
+    // {
+    //     void GetMapping()
+    //     {
+    //         //Customer Get 
+    //         app.MapGet("/customers", (ApplicationContext db) =>
+    //         {
+    //             var customers = db.Customers
+    //                 .Where(x => x.DeletedByUserID == null).Select(x => new
+    //                 {
+    //                     x.Id,
+    //                     x.FirstName,
+    //                     x.MiddleNames,
+    //                     x.LastName,
+    //                     x.DateOfBirth,
+    //                     x.BankAccounts,
+    //                     x.DailyTransferLimit,
+    //                     x.CreateDate,
+    //                     x.CreatedByUserID,
+    //                     x.UpdateDate,
+    //                     x.UpdatedByUserID,
+    //                     x.DeleteDate,
+    //                     x.DeletedByUserID
+    //                 }).ToList();
+    //
+    //             return Results.Ok(customers);
+    //         });
+    //
+    //         app.MapGet("/customers/{id}", async (int id, ApplicationContext db) =>
+    //         {
+    //             var dbCustomer = db.Customers.FirstOrDefault(x => x.Id == id);
+    //
+    //             if (dbCustomer != null)
+    //             {
+    //                 return Results.Ok(new
+    //                 {
+    //                     dbCustomer.Id,
+    //                     dbCustomer.FirstName,
+    //                     dbCustomer.MiddleNames,
+    //                     dbCustomer.LastName,
+    //                     dbCustomer.DateOfBirth,
+    //                     dbCustomer.BankAccounts,
+    //                     dbCustomer.DailyTransferLimit,
+    //                     dbCustomer.CreateDate,
+    //                     dbCustomer.CreatedByUserID,
+    //                     dbCustomer.UpdateDate,
+    //                     dbCustomer.UpdatedByUserID,
+    //                     dbCustomer.DeleteDate,
+    //                     dbCustomer.DeletedByUserID
+    //                 });
+    //             }
+    //
+    //             return Results.NotFound();
+    //         });
+    //
+    //         app.MapGet("/customers-all", (ApplicationContext db) =>
+    //         {
+    //             var customers = db.Customers
+    //                 .Select(x => new
+    //                 {
+    //                     x.Id,
+    //                     x.FirstName,
+    //                     x.MiddleNames,
+    //                     x.LastName,
+    //                     x.DateOfBirth,
+    //                     x.BankAccounts,
+    //                     x.DailyTransferLimit,
+    //                     x.CreateDate,
+    //                     x.CreatedByUserID,
+    //                     x.UpdateDate,
+    //                     x.UpdatedByUserID,
+    //                     x.DeleteDate,
+    //                     x.DeletedByUserID
+    //                 }).ToList();
+    //
+    //             return Results.Ok(customers);
+    //         });
+    //
+    //         app.MapGet("/customers-deleted", (ApplicationContext db) =>
+    //         {
+    //             var customers = db.Customers
+    //                 .Where(x => x.DeletedByUserID != null).Select(x => new
+    //                 {
+    //                     x.Id,
+    //                     x.FirstName,
+    //                     x.MiddleNames,
+    //                     x.LastName,
+    //                     x.DateOfBirth,
+    //                     x.BankAccounts,
+    //                     x.DailyTransferLimit,
+    //                     x.CreateDate,
+    //                     x.CreatedByUserID,
+    //                     x.UpdateDate,
+    //                     x.UpdatedByUserID,
+    //                     x.DeleteDate,
+    //                     x.DeletedByUserID
+    //                 }).ToList();
+    //
+    //             return Results.Ok(customers);
+    //         });
+    //
+    //         app.MapPost("/customers", async ([FromBody] AddCustomerModel customer, ApplicationContext db) =>
+    //         {
+    //             db.Customers.Add((Customer)DateAndUserInfoUpdate.UpdateCreateInfo(new Customer
+    //             {
+    //                 FirstName = customer.FirstName,
+    //                 MiddleNames = customer.MiddleNames,
+    //                 LastName = customer.LastName,
+    //                 DateOfBirth = customer.DateOfBirth,
+    //                 DailyTransferLimit = customer.DailyTransferLimit,
+    //             }, userId));
+    //
+    //             await db.SaveChangesAsync();
+    //
+    //             return Results.Ok();
+    //         });
+    //     }
+    //
+    //     void EditMapping()
+    //     {
+    //         app.MapPost("/customers-edit", async ([FromBody] EditCustomerModel customer, ApplicationContext db) =>
+    //         {
+    //             var dbCustomer = db.Customers.FirstOrDefault(x => x.DeletedByUserID == null && x.Id == customer.id);
+    //
+    //             if (dbCustomer != null)
+    //             {
+    //                 dbCustomer.FirstName = customer.FirstName;
+    //                 dbCustomer.MiddleNames = customer.MiddleNames;
+    //                 dbCustomer.LastName = customer.LastName;
+    //                 dbCustomer.DateOfBirth = customer.DateOfBirth;
+    //                 dbCustomer.DailyTransferLimit = customer.DailyTransferLimit;
+    //
+    //                 db.Customers.Update((Customer)DateAndUserInfoUpdate.UpdateUpdateInfo(dbCustomer, userId));
+    //
+    //                 await db.SaveChangesAsync();
+    //
+    //                 return Results.Ok();
+    //             }
+    //
+    //             return Results.NotFound();
+    //         });
+    //     }
+    //
+    //     void DeleteMapping()
+    //     {
+    //         app.MapPost("/customers-delete", async ([FromBody] int id, ApplicationContext db) =>
+    //         {
+    //             var customer = db.Customers.FirstOrDefault(x => x.Id == id);
+    //             if (customer == null || customer.DeletedByUserID != null)
+    //                 return Results.Ok();
+    //
+    //             db.Customers.Update((Customer)DateAndUserInfoUpdate.UpdateDeleteInfo(customer, userId));
+    //             await db.SaveChangesAsync();
+    //
+    //             return Results.Ok();
+    //         });
+    //     }
+    //
+    //     GetMapping();
+    //     EditMapping();
+    //     DeleteMapping();
+    // }
+    
+    void AddCustomerMapping()
     {
-        FirstName = customer.FirstName,
-        MiddleNames = customer.MiddleNames,
-        LastName = customer.LastName,
-        DateOfBirth = customer.DateOfBirth,
-        DailyTransferLimit = customer.DailyTransferLimit,
-    }, userId));
+        void GetMapping()
+        {
+            object CoreCustomerData(Customer customer) => new {
+                    customer.Id,
+                    customer.FirstName,
+                    customer.MiddleNames,
+                    customer.LastName,
+                    customer.DateOfBirth,
+                    customer.DailyTransferLimit,
+                    customer.CreateDate,
+                    customer.CreatedByUserID,
+                    customer.UpdateDate,
+                    customer.UpdatedByUserID,
+                    customer.DeleteDate,
+                    customer.DeletedByUserID
+                };
+            //Customer Get 
+            app.MapGet("/customers", (ApplicationContext db) =>
+            {
+                var customers = db.Customers.Where(x => x.DeletedByUserID == null).Select(CoreCustomerData).ToList();
+                return Results.Ok(customers);
+            });
 
-    await db.SaveChangesAsync();
-     
-    return Results.Ok();
-});
+            app.MapGet("/customers/{id}", async (int id, ApplicationContext db) =>
+            {
+                var dbCustomer = db.Customers.FirstOrDefault(x => x.Id == id);
+
+                if (dbCustomer != null)
+                    return Results.Ok(CoreCustomerData(dbCustomer));
+                
+                return Results.NotFound();
+            });
+
+            app.MapGet("/customers-all", (ApplicationContext db) =>
+            {
+                var customers = db.Customers.Select(CoreCustomerData).ToList();
+                return Results.Ok(customers);
+            });
+
+            app.MapGet("/customers-deleted", (ApplicationContext db) =>
+            {
+                var customers = db.Customers.Where(x => x.DeletedByUserID != null).Select(CoreCustomerData).ToList();
+                return Results.Ok(customers);
+            });
+
+            app.MapPost("/customers", async ([FromBody] AddCustomerModel customer, ApplicationContext db) =>
+            {
+                db.Customers.Add((Customer)DateAndUserInfoUpdate.UpdateCreateInfo(new Customer {
+                    FirstName = customer.FirstName,
+                    MiddleNames = customer.MiddleNames,
+                    LastName = customer.LastName,
+                    DateOfBirth = customer.DateOfBirth,
+                    DailyTransferLimit = customer.DailyTransferLimit,
+                }, userId));
+                
+                await db.SaveChangesAsync();
+
+                return Results.Ok();
+            });
+        }
+
+        void EditMapping()
+        {
+            app.MapPost("/customers-edit", async ([FromBody] EditCustomerModel customer, ApplicationContext db) =>
+            {
+                var dbCustomer = db.Customers.FirstOrDefault(x => x.DeletedByUserID == null && x.Id == customer.id);
+                
+                if (dbCustomer != null)
+                {
+                    dbCustomer.FirstName = customer.FirstName;
+                    dbCustomer.MiddleNames = customer.MiddleNames;
+                    dbCustomer.LastName = customer.LastName;
+                    dbCustomer.DateOfBirth = customer.DateOfBirth;
+                    dbCustomer.DailyTransferLimit = customer.DailyTransferLimit;
+                    DateAndUserInfoUpdate.UpdateUpdateInfo(dbCustomer, userId);
+                    await db.SaveChangesAsync();
+                    return Results.Ok();
+                }
+
+                return Results.NotFound();
+            });
+        }
+
+        void DeleteMapping()
+        {
+            app.MapPost("/customers-delete", async ([FromBody] int id, ApplicationContext db) =>
+            {
+                var customer = db.Customers.FirstOrDefault(x => x.Id == id);
+                if (customer == null || customer.DeletedByUserID != null)
+                    return Results.Ok();
+
+                db.Customers.Update((Customer)DateAndUserInfoUpdate.UpdateDeleteInfo(customer, userId));
+                await db.SaveChangesAsync();
+
+                return Results.Ok();
+            });
+        }
+
+        GetMapping();
+        EditMapping();
+        DeleteMapping();
+    }
+    
+    void AddBankAccountMapping()
+    {
+        void GetMapping()
+        {
+            object CoreBankAccountData(BankAccount bankAccount) => new {
+                    bankAccount.Id,
+                    bankAccount.AccountNumber,
+                    bankAccount.CustomerId,
+                    bankAccount.IsFrozen,
+                    bankAccount.FrozenByUser,
+                    bankAccount.CreateDate,
+                    bankAccount.CreatedByUserID,
+                    bankAccount.UpdateDate,
+                    bankAccount.UpdatedByUserID,
+                    bankAccount.DeleteDate,
+                    bankAccount.DeletedByUserID
+                };
+            //Customer Get 
+            app.MapGet("/customers", (ApplicationContext db) =>
+            {
+                var customers = db.Customers.Where(x => x.DeletedByUserID == null).Select(CoreCustomerData).ToList();
+                return Results.Ok(customers);
+            });
+
+            app.MapGet("/customers/{id}", async (int id, ApplicationContext db) =>
+            {
+                var dbCustomer = db.Customers.FirstOrDefault(x => x.Id == id);
+
+                if (dbCustomer != null)
+                    return Results.Ok(CoreCustomerData(dbCustomer));
+                
+                return Results.NotFound();
+            });
+
+            app.MapGet("/customers-all", (ApplicationContext db) =>
+            {
+                var customers = db.Customers.Select(CoreCustomerData).ToList();
+                return Results.Ok(customers);
+            });
+
+            app.MapGet("/customers-deleted", (ApplicationContext db) =>
+            {
+                var customers = db.Customers.Where(x => x.DeletedByUserID != null).Select(CoreCustomerData).ToList();
+                return Results.Ok(customers);
+            });
+
+            app.MapPost("/customers", async ([FromBody] AddCustomerModel customer, ApplicationContext db) =>
+            {
+                db.Customers.Add((Customer)DateAndUserInfoUpdate.UpdateCreateInfo(new Customer {
+                    FirstName = customer.FirstName,
+                    MiddleNames = customer.MiddleNames,
+                    LastName = customer.LastName,
+                    DateOfBirth = customer.DateOfBirth,
+                    DailyTransferLimit = customer.DailyTransferLimit,
+                }, userId));
+                
+                await db.SaveChangesAsync();
+
+                return Results.Ok();
+            });
+        }
+
+        void EditMapping()
+        {
+            app.MapPost("/customers-edit", async ([FromBody] EditCustomerModel customer, ApplicationContext db) =>
+            {
+                var dbCustomer = db.Customers.FirstOrDefault(x => x.DeletedByUserID == null && x.Id == customer.id);
+
+                if (dbCustomer != null)
+                {
+                    dbCustomer.FirstName = customer.FirstName;
+                    dbCustomer.MiddleNames = customer.MiddleNames;
+                    dbCustomer.LastName = customer.LastName;
+                    dbCustomer.DateOfBirth = customer.DateOfBirth;
+                    dbCustomer.DailyTransferLimit = customer.DailyTransferLimit;
+
+                    db.Customers.Update((Customer)DateAndUserInfoUpdate.UpdateUpdateInfo(dbCustomer, userId));
+
+                    await db.SaveChangesAsync();
+
+                    return Results.Ok();
+                }
+
+                return Results.NotFound();
+            });
+        }
+
+        void DeleteMapping()
+        {
+            app.MapPost("/customers-delete", async ([FromBody] int id, ApplicationContext db) =>
+            {
+                var customer = db.Customers.FirstOrDefault(x => x.Id == id);
+                if (customer == null || customer.DeletedByUserID != null)
+                    return Results.Ok();
+
+                db.Customers.Update((Customer)DateAndUserInfoUpdate.UpdateDeleteInfo(customer, userId));
+                await db.SaveChangesAsync();
+
+                return Results.Ok();
+            });
+        }
+
+        GetMapping();
+        EditMapping();
+        DeleteMapping();
+    }
+
+    AddCustomerMapping();
+    AddBankAccountMapping();
+}
+
+MapDataModels();
 
 
-app.MapPost("/customers-edit", async ([FromBody] Customer customer, ApplicationContext db) =>
-{
-    db.Customers.Update((Customer)DateAndUserInfoUpdate.UpdateUpdateInfo(customer, userId));
-
-    await db.SaveChangesAsync();
-
-    return Results.Ok();
-});
-
-app.MapPost("/customers-delete", async ([FromBody] int id, ApplicationContext db) =>
-{
-    var customer = db.Customers.FirstOrDefault(x => x.Id == id);
-    if (customer == null || customer.DeletedByUserID != null)
-        return Results.Ok();
-
-    db.Customers.Update((Customer)DateAndUserInfoUpdate.UpdateDeleteInfo(customer, userId));
-    await db.SaveChangesAsync();
-
-    return Results.Ok();
-});
 
 app.Run();

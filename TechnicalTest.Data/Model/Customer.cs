@@ -6,7 +6,6 @@ public class Customer : BaseModel<int>
     public string MiddleNames { get; set; }
     public required string LastName { get; set; }
     public required DateTime DateOfBirth { get; set; }
-    public ICollection<BankAccount> BankAccounts { get; set; } = new HashSet<BankAccount>();
-
     public required decimal DailyTransferLimit { get; set; }
+    public ICollection<BankAccount> BankAccounts { get; set; } = new HashSet<BankAccount>();
 }
