@@ -9,7 +9,7 @@ using TechnicalTest.Data.Model;
 
 internal partial class Program
 {
-    private static int UserId { get; set; }
+    public static int UserId { get; set; }
     public static WebApplication App { get; set; }
     
     public static async Task Main(string[] args)
