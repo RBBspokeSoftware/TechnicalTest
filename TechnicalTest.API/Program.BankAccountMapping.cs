@@ -59,7 +59,7 @@ internal partial class Program
     {
         App.MapPost("/bankaccount", async ([FromBody] AddBankAccountModel bankAccount, ApplicationContext db) =>
         {
-            var dbCustomer = db.Customers.FirstOrDefault(x => x.Id == bankAccount.CustomerId && x.DeletedByUserId == null);
+            var dbCustomer = db.Customers.FirstOrDefault(x => x.DeletedByUserId == null && x.Id == bankAccount.CustomerId );
 
             if (dbCustomer == null)
                 return Results.NotFound();
@@ -81,7 +81,7 @@ internal partial class Program
     {
         App.MapPost("/bankaccount-edit", async ([FromBody] EditBankAccountModel bankAccount, ApplicationContext db) =>
         {
-            var dbBankAccount = db.BankAccounts.FirstOrDefault(x => x.DeletedByUserId == null && x.Id == bankAccount.Id);
+            var dbBankAccount = db.BankAccounts.FirstOrDefault(x =>  x.DeletedByUserId == null && x.Id == bankAccount.Id);
 
             if(dbBankAccount == null)
                 return Results.NotFound();
@@ -97,7 +97,7 @@ internal partial class Program
     {
         App.MapPost("/bankaccount-delete", async ([FromBody] int id, ApplicationContext db) =>
         {
-            var bankaccount = db.BankAccounts.FirstOrDefault(x => x.Id == id && x.DeletedByUserId != null);
+            var bankaccount = db.BankAccounts.FirstOrDefault(x => x.DeletedByUserId == null && x.Id == id);
             if (bankaccount == null)
                 return Results.Ok();
 

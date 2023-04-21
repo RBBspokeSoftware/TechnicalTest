@@ -94,7 +94,7 @@ internal partial class Program
     {
         App.MapPost("/customer-delete", async ([FromBody] int id, ApplicationContext db) =>
         {
-            var customer = db.Customers.FirstOrDefault(x => x.Id == id && x.DeletedByUserId != null);
+            var customer = db.Customers.FirstOrDefault(x => x.DeletedByUserId == null && x.Id == id );
             if (customer == null)
                 return Results.Ok();
 
