@@ -10,7 +10,7 @@ using TechnicalTest.Data.Model;
 internal partial class Program
 {
     private static int UserId { get; set; }
-    private static WebApplication App { get; set; }
+    public static WebApplication App { get; set; }
     
     public static async Task Main(string[] args)
     {
@@ -46,19 +46,19 @@ internal partial class Program
 
         App.MapGet("/", () => "Hello world");
 
-        SetGetCustomerMapping();
-        SetAddCustomerMapping();
-        SetEditCustomerMapping();
-        SetDeleteCustomerMapping();
-        SetGetBankAccountMapping();
-        SetAddBankAccountMapping();
-        SetEditBankAccountMapping();
-        SetDeleteBankAccountMapping();
-        SetGetBankAccountFrozenStatusMapping();
-        SetAddBankAccountFrozenStatusMapping();
-        SetDeleteBankAccountFrozenStatusMapping();
-        SetGetBankAccountTransferMapping();
-        SetAddBankAccountTransferMapping();
+        // SetGetCustomerMapping();
+        // SetAddCustomerMapping();
+        // SetEditCustomerMapping();
+        // SetDeleteCustomerMapping();
+        // SetGetBankAccountMapping();
+        // SetAddBankAccountMapping();
+        // SetEditBankAccountMapping();
+        // SetDeleteBankAccountMapping();
+        // SetGetBankAccountFrozenStatusMapping();
+        // SetAddBankAccountFrozenStatusMapping();
+        // SetDeleteBankAccountFrozenStatusMapping();
+        // SetGetBankAccountTransferMapping();
+        // SetAddBankAccountTransferMapping();
 
         App.Run();
     }

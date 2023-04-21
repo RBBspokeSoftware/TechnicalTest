@@ -6,24 +6,24 @@ using TechnicalTest.Data.Model;
 
 internal partial class Program
 {
+    private static object CoreCustomerData(Customer customer) => new
+    {
+        customer.Id,
+        customer.FirstName,
+        customer.MiddleNames,
+        customer.LastName,
+        customer.DateOfBirth,
+        customer.DailyTransferLimit,
+        customer.CreateDate,
+        customer.CreatedByUserId,
+        customer.UpdateDate,
+        customer.UpdatedByUserId,
+        customer.DeleteDate,
+        customer.DeletedByUserId
+    };
+    
     private static void SetGetCustomerMapping()
     {
-        object CoreCustomerData(Customer customer) => new
-        {
-            customer.Id,
-            customer.FirstName,
-            customer.MiddleNames,
-            customer.LastName,
-            customer.DateOfBirth,
-            customer.DailyTransferLimit,
-            customer.CreateDate,
-            customer.CreatedByUserId,
-            customer.UpdateDate,
-            customer.UpdatedByUserId,
-            customer.DeleteDate,
-            customer.DeletedByUserId
-        };
-
         App.MapGet("/customer", (ApplicationContext db) =>
         {
             var customers = db.Customers.Where(x => x.DeletedByUserId == null).Select(CoreCustomerData).ToList();
@@ -66,6 +66,23 @@ internal partial class Program
             await db.SaveChangesAsync();
 
             return Results.Ok();
+        });
+        
+        App.MapPost("/customer-return", async ([FromBody] AddCustomerModel customer, ApplicationContext db) =>
+        {
+            Customer dbCustomer = new Customer
+            {
+                FirstName = customer.FirstName,
+                MiddleNames = customer.MiddleNames,
+                LastName = customer.LastName,
+                DateOfBirth = customer.DateOfBirth,
+                DailyTransferLimit = customer.DailyTransferLimit,
+            };
+            db.Customers.Add((Customer)DateAndUserInfoUpdate.UpdateCreateInfo(dbCustomer, UserId));
+
+            await db.SaveChangesAsync();
+
+            return Results.Ok(CoreCustomerData(dbCustomer));
         });
     }
     
