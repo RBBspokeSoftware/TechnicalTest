@@ -70,6 +70,36 @@ namespace TechnicalTest.API.Controllers
             return Results.Ok(dbBankAccount);
         }
         
+        [HttpGet]
+        [Route("{id}/FrozenStatus")]
+        public IResult GetFrozenStatus(int id)
+        {
+            using var scope = Program.App.Services.CreateScope();
+            var db = scope.ServiceProvider.GetRequiredService<ApplicationContext>();
+            var dbBankAccount = db.BankAccountFrozenStatuses.Where(x => x.DeletedByUserId == null && x.BankAccountId == id);
+            return dbBankAccount != null ? Results.Ok(dbBankAccount) : Results.NotFound();
+        }
+        
+        [HttpGet]
+        [Route("{id}/FrozenStatus/All")]
+        public IResult GetFrozenStatusAll(int id)
+        {
+            using var scope = Program.App.Services.CreateScope();
+            var db = scope.ServiceProvider.GetRequiredService<ApplicationContext>();
+            var dbBankAccount = db.BankAccountFrozenStatuses.Where(x => x.BankAccountId == id);
+            return dbBankAccount != null ? Results.Ok(dbBankAccount) : Results.NotFound();
+        }
+        
+        [HttpGet]
+        [Route("{id}/FrozenStatus/Deleted")]
+        public IResult GetFrozenStatusDeleted(int id)
+        {
+            using var scope = Program.App.Services.CreateScope();
+            var db = scope.ServiceProvider.GetRequiredService<ApplicationContext>();
+            var dbBankAccount = db.BankAccountFrozenStatuses.Where(x => x.DeletedByUserId != null &&x.BankAccountId == id);
+            return dbBankAccount != null ? Results.Ok(dbBankAccount) : Results.NotFound();
+        }
+        
         #endregion Get
         
         [HttpPost]
