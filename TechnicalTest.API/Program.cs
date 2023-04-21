@@ -40,7 +40,6 @@ int userId = 0;
 app.MapGet("/", () => "Hello world");
 
 
-
 void MapDataModels()
 {
     // void AddCustomerMapping()
@@ -205,64 +204,67 @@ void MapDataModels()
     //     EditMapping();
     //     DeleteMapping();
     // }
-    
+
     void AddCustomerMapping()
     {
         void GetMapping()
         {
-            object CoreCustomerData(Customer customer) => new {
-                    customer.Id,
-                    customer.FirstName,
-                    customer.MiddleNames,
-                    customer.LastName,
-                    customer.DateOfBirth,
-                    customer.DailyTransferLimit,
-                    customer.CreateDate,
-                    customer.CreatedByUserID,
-                    customer.UpdateDate,
-                    customer.UpdatedByUserID,
-                    customer.DeleteDate,
-                    customer.DeletedByUserID
-                };
+            object CoreCustomerData(Customer customer) => new
+            {
+                customer.Id,
+                customer.FirstName,
+                customer.MiddleNames,
+                customer.LastName,
+                customer.DateOfBirth,
+                customer.DailyTransferLimit,
+                customer.CreateDate,
+                customer.CreatedByUserID,
+                customer.UpdateDate,
+                customer.UpdatedByUserID,
+                customer.DeleteDate,
+                customer.DeletedByUserID
+            };
+
             //Customer Get 
-            app.MapGet("/customers", (ApplicationContext db) =>
+            app.MapGet("/customer", (ApplicationContext db) =>
             {
                 var customers = db.Customers.Where(x => x.DeletedByUserID == null).Select(CoreCustomerData).ToList();
                 return Results.Ok(customers);
             });
 
-            app.MapGet("/customers/{id}", async (int id, ApplicationContext db) =>
+            app.MapGet("/customer/{id:int}", (int id, ApplicationContext db) =>
             {
                 var dbCustomer = db.Customers.FirstOrDefault(x => x.Id == id);
 
-                if (dbCustomer != null)
-                    return Results.Ok(CoreCustomerData(dbCustomer));
-                
-                return Results.NotFound();
+                return dbCustomer != null ? Results.Ok(CoreCustomerData(dbCustomer)) : Results.NotFound();
             });
 
-            app.MapGet("/customers-all", (ApplicationContext db) =>
+            app.MapGet("/customer-all", (ApplicationContext db) =>
             {
                 var customers = db.Customers.Select(CoreCustomerData).ToList();
                 return Results.Ok(customers);
             });
 
-            app.MapGet("/customers-deleted", (ApplicationContext db) =>
+            app.MapGet("/customer-deleted", (ApplicationContext db) =>
             {
                 var customers = db.Customers.Where(x => x.DeletedByUserID != null).Select(CoreCustomerData).ToList();
                 return Results.Ok(customers);
             });
+        }
 
-            app.MapPost("/customers", async ([FromBody] AddCustomerModel customer, ApplicationContext db) =>
+        void AddMapping()
+        {
+            app.MapPost("/customer", async ([FromBody] AddCustomerModel customer, ApplicationContext db) =>
             {
-                db.Customers.Add((Customer)DateAndUserInfoUpdate.UpdateCreateInfo(new Customer {
+                db.Customers.Add((Customer)DateAndUserInfoUpdate.UpdateCreateInfo(new Customer
+                {
                     FirstName = customer.FirstName,
                     MiddleNames = customer.MiddleNames,
                     LastName = customer.LastName,
                     DateOfBirth = customer.DateOfBirth,
                     DailyTransferLimit = customer.DailyTransferLimit,
                 }, userId));
-                
+
                 await db.SaveChangesAsync();
 
                 return Results.Ok();
@@ -271,35 +273,34 @@ void MapDataModels()
 
         void EditMapping()
         {
-            app.MapPost("/customers-edit", async ([FromBody] EditCustomerModel customer, ApplicationContext db) =>
+            app.MapPost("/customer-edit", async ([FromBody] EditCustomerModel customer, ApplicationContext db) =>
             {
-                var dbCustomer = db.Customers.FirstOrDefault(x => x.DeletedByUserID == null && x.Id == customer.id);
-                
-                if (dbCustomer != null)
-                {
-                    dbCustomer.FirstName = customer.FirstName;
-                    dbCustomer.MiddleNames = customer.MiddleNames;
-                    dbCustomer.LastName = customer.LastName;
-                    dbCustomer.DateOfBirth = customer.DateOfBirth;
-                    dbCustomer.DailyTransferLimit = customer.DailyTransferLimit;
-                    DateAndUserInfoUpdate.UpdateUpdateInfo(dbCustomer, userId);
-                    await db.SaveChangesAsync();
-                    return Results.Ok();
-                }
+                var dbCustomer = db.Customers.FirstOrDefault(x => x.DeletedByUserID == null && x.Id == customer.Id);
 
-                return Results.NotFound();
+                if (dbCustomer == null)
+                    return Results.NotFound();
+                
+                dbCustomer.FirstName = customer.FirstName;
+                dbCustomer.MiddleNames = customer.MiddleNames;
+                dbCustomer.LastName = customer.LastName;
+                dbCustomer.DateOfBirth = customer.DateOfBirth;
+                dbCustomer.DailyTransferLimit = customer.DailyTransferLimit;
+                DateAndUserInfoUpdate.UpdateUpdateInfo(dbCustomer, userId);
+                await db.SaveChangesAsync();
+
+                return Results.Ok();
             });
         }
 
         void DeleteMapping()
         {
-            app.MapPost("/customers-delete", async ([FromBody] int id, ApplicationContext db) =>
+            app.MapPost("/customer-delete", async ([FromBody] int id, ApplicationContext db) =>
             {
                 var customer = db.Customers.FirstOrDefault(x => x.Id == id);
                 if (customer == null || customer.DeletedByUserID != null)
                     return Results.Ok();
 
-                db.Customers.Update((Customer)DateAndUserInfoUpdate.UpdateDeleteInfo(customer, userId));
+                DateAndUserInfoUpdate.UpdateDeleteInfo(customer, userId);
                 await db.SaveChangesAsync();
 
                 return Results.Ok();
@@ -307,65 +308,74 @@ void MapDataModels()
         }
 
         GetMapping();
+        AddMapping();
         EditMapping();
         DeleteMapping();
     }
-    
+
     void AddBankAccountMapping()
     {
         void GetMapping()
         {
-            object CoreBankAccountData(BankAccount bankAccount) => new {
-                    bankAccount.Id,
-                    bankAccount.AccountNumber,
-                    bankAccount.CustomerId,
-                    bankAccount.Balance,
-                    bankAccount.CreateDate,
-                    bankAccount.CreatedByUserID,
-                    bankAccount.UpdateDate,
-                    bankAccount.UpdatedByUserID,
-                    bankAccount.DeleteDate,
-                    bankAccount.DeletedByUserID
-                };
+            object CoreBankAccountData(BankAccount bankAccount) => new
+            {
+                bankAccount.Id,
+                bankAccount.AccountNumber,
+                bankAccount.CustomerId,
+                bankAccount.Balance,
+                bankAccount.CreateDate,
+                bankAccount.CreatedByUserID,
+                bankAccount.UpdateDate,
+                bankAccount.UpdatedByUserID,
+                bankAccount.DeleteDate,
+                bankAccount.DeletedByUserID
+            };
+
             //Customer Get 
-            app.MapGet("/customers", (ApplicationContext db) =>
+            app.MapGet("/bankaccount", (ApplicationContext db) =>
             {
-                var customers = db.Customers.Where(x => x.DeletedByUserID == null).Select(CoreCustomerData).ToList();
+                var bankAccounts = db.BankAccounts.Where(x => x.DeletedByUserID == null).Select(CoreBankAccountData).ToList();
+                return Results.Ok(bankAccounts);
+            });
+
+            app.MapGet("/customer/{id:int}/bankaccount", (int id, ApplicationContext db) =>
+            {
+                var dbBankAccount = db.BankAccounts.FirstOrDefault(x => x.CustomerId == id && x.DeletedByUserID == null);
+                return dbBankAccount != null ? Results.Ok(CoreBankAccountData(dbBankAccount)) : Results.NotFound();
+            });
+
+            app.MapGet("/bankaccount/{id:int}", (int id, ApplicationContext db) =>
+            {
+                var dbBankAccount = db.BankAccounts.FirstOrDefault(x => x.Id == id);
+                return dbBankAccount != null ? Results.Ok(CoreBankAccountData(dbBankAccount)) : Results.NotFound();
+            });
+
+            app.MapGet("/bankaccount-all", (ApplicationContext db) =>
+            {
+                var customers = db.BankAccounts.Select(CoreBankAccountData).ToList();
                 return Results.Ok(customers);
             });
 
-            app.MapGet("/customers/{id}", async (int id, ApplicationContext db) =>
+            app.MapGet("/bankaccount-deleted", (ApplicationContext db) =>
             {
-                var dbCustomer = db.Customers.FirstOrDefault(x => x.Id == id);
-
-                if (dbCustomer != null)
-                    return Results.Ok(CoreCustomerData(dbCustomer));
-                
-                return Results.NotFound();
-            });
-
-            app.MapGet("/customers-all", (ApplicationContext db) =>
-            {
-                var customers = db.Customers.Select(CoreCustomerData).ToList();
+                var customers = db.BankAccounts.Where(x => x.DeletedByUserID != null).Select(CoreBankAccountData).ToList();
                 return Results.Ok(customers);
             });
 
-            app.MapGet("/customers-deleted", (ApplicationContext db) =>
+            app.MapPost("/bankaccount", async ([FromBody] AddBankAccount bankAccount, ApplicationContext db) =>
             {
-                var customers = db.Customers.Where(x => x.DeletedByUserID != null).Select(CoreCustomerData).ToList();
-                return Results.Ok(customers);
-            });
+                var dbCustomer = db.Customers.FirstOrDefault(x => x.Id == bankAccount.CustomerId && x.DeletedByUserID == null);
 
-            app.MapPost("/customers", async ([FromBody] AddCustomerModel customer, ApplicationContext db) =>
-            {
-                db.Customers.Add((Customer)DateAndUserInfoUpdate.UpdateCreateInfo(new Customer {
-                    FirstName = customer.FirstName,
-                    MiddleNames = customer.MiddleNames,
-                    LastName = customer.LastName,
-                    DateOfBirth = customer.DateOfBirth,
-                    DailyTransferLimit = customer.DailyTransferLimit,
+                if (dbCustomer == null)
+                    return Results.NotFound();
+
+                db.BankAccounts.Add((BankAccount)DateAndUserInfoUpdate.UpdateCreateInfo(new BankAccount
+                {
+                    CustomerId = bankAccount.CustomerId,
+                    AccountNumber = bankAccount.AccountNumber,
+                    Balance = bankAccount.Balance
                 }, userId));
-                
+
                 await db.SaveChangesAsync();
 
                 return Results.Ok();
@@ -374,40 +384,31 @@ void MapDataModels()
 
         void EditMapping()
         {
-            app.MapPost("/customers-edit", async ([FromBody] EditCustomerModel customer, ApplicationContext db) =>
+            app.MapPost("/bankaccount-edit", async ([FromBody] EditBankAccount bankAccount, ApplicationContext db) =>
             {
-                var dbCustomer = db.Customers.FirstOrDefault(x => x.DeletedByUserID == null && x.Id == customer.id);
+                var dbBankAccount = db.BankAccounts.FirstOrDefault(x => x.DeletedByUserID == null && x.Id == bankAccount.Id);
 
-                if (dbCustomer != null)
-                {
-                    dbCustomer.FirstName = customer.FirstName;
-                    dbCustomer.MiddleNames = customer.MiddleNames;
-                    dbCustomer.LastName = customer.LastName;
-                    dbCustomer.DateOfBirth = customer.DateOfBirth;
-                    dbCustomer.DailyTransferLimit = customer.DailyTransferLimit;
-
-                    db.Customers.Update((Customer)DateAndUserInfoUpdate.UpdateUpdateInfo(dbCustomer, userId));
-
-                    await db.SaveChangesAsync();
-
-                    return Results.Ok();
-                }
-
-                return Results.NotFound();
+                if(dbBankAccount == null)
+                    return Results.NotFound();
+                
+                dbBankAccount.AccountNumber = bankAccount.AccountNumber;
+                DateAndUserInfoUpdate.UpdateUpdateInfo(dbBankAccount, userId);
+                await db.SaveChangesAsync();
+                return Results.Ok();
             });
         }
 
         void DeleteMapping()
         {
-            app.MapPost("/customers-delete", async ([FromBody] int id, ApplicationContext db) =>
+            app.MapPost("/bankaccount-delete", async ([FromBody] int id, ApplicationContext db) =>
             {
-                var customer = db.Customers.FirstOrDefault(x => x.Id == id);
-                if (customer == null || customer.DeletedByUserID != null)
-                    return Results.Ok();
+                var dbBankAccount = db.BankAccounts.FirstOrDefault(x => x.DeletedByUserID == null && x.Id == id);
+                
+                if (dbBankAccount == null)
+                    return Results.NotFound();
 
-                db.Customers.Update((Customer)DateAndUserInfoUpdate.UpdateDeleteInfo(customer, userId));
+                DateAndUserInfoUpdate.UpdateDeleteInfo(dbBankAccount, userId);
                 await db.SaveChangesAsync();
-
                 return Results.Ok();
             });
         }
@@ -422,7 +423,6 @@ void MapDataModels()
 }
 
 MapDataModels();
-
 
 
 app.Run();
