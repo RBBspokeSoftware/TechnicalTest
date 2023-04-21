@@ -78,7 +78,7 @@ namespace TechnicalTest.API.Controllers
         {
             using var scope = Program.App.Services.CreateScope();
             var db = scope.ServiceProvider.GetRequiredService<ApplicationContext>();
-            var dbBankAccount = db.BankAccounts.Where(x => x.CustomerId == id).Select(BankAccountController.CoreBankAccountData);
+            var dbBankAccount = db.BankAccounts.Where(x => x.DeletedByUserId == null && x.CustomerId == id).Select(BankAccountController.CoreBankAccountData).ToList();
             return Results.Ok(dbBankAccount);
         }
 

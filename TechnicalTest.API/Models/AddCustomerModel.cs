@@ -10,4 +10,4 @@ public record EditBankAccountModel(int Id, string AccountNumber);
 
 public record AddBankAccountFrozenStatusModel(int BankAccountId, string Comment);
 
-public record AddBankAccountTransferModel(int FromBankAccountId, int ToBankAccountId, string Reference, decimal Amount);
+public record AddBankAccountTransferModel(int FromBankAccountId, int ToBankAccountId, string? Reference, decimal Amount);
