@@ -73,8 +73,8 @@ namespace TechnicalTest.API.Controllers
             using var scope = Program.App.Services.CreateScope();
             var db = scope.ServiceProvider.GetRequiredService<ApplicationContext>();
             var dbBankAccount = db.BankAccountFrozenStatuses
-                .Where(x => x.DeletedByUserId == null && x.BankAccountId == id).ToList();
-            return dbBankAccount != null ? Results.Ok(dbBankAccount) : Results.NotFound();
+                .Where(x => x.DeletedByUserId == null && x.BankAccountId == id).Select(BankAccountFrozenStatusController.CoreBankAccountFrozenStatusTransferData).ToList();
+            return Results.Ok(dbBankAccount);
         }
 
         [HttpGet]
@@ -83,8 +83,8 @@ namespace TechnicalTest.API.Controllers
         {
             using var scope = Program.App.Services.CreateScope();
             var db = scope.ServiceProvider.GetRequiredService<ApplicationContext>();
-            var dbBankAccount = db.BankAccountFrozenStatuses.Where(x => x.BankAccountId == id).ToList();
-            return dbBankAccount != null ? Results.Ok(dbBankAccount) : Results.NotFound();
+            var dbBankAccount = db.BankAccountFrozenStatuses.Where(x => x.BankAccountId == id).Select(BankAccountFrozenStatusController.CoreBankAccountFrozenStatusTransferData).ToList();
+            return Results.Ok(dbBankAccount);
         }
 
         [HttpGet]
@@ -94,8 +94,8 @@ namespace TechnicalTest.API.Controllers
             using var scope = Program.App.Services.CreateScope();
             var db = scope.ServiceProvider.GetRequiredService<ApplicationContext>();
             var dbBankAccount = db.BankAccountFrozenStatuses
-                .Where(x => x.DeletedByUserId != null && x.BankAccountId == id).ToList();
-            return dbBankAccount != null ? Results.Ok(dbBankAccount) : Results.NotFound();
+                .Where(x => x.DeletedByUserId != null && x.BankAccountId == id).Select(BankAccountFrozenStatusController.CoreBankAccountFrozenStatusTransferData).ToList();
+            return Results.Ok(dbBankAccount);
         }
 
         [HttpGet]

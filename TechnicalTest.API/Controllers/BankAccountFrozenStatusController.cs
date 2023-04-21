@@ -11,10 +11,22 @@ using TechnicalTest.Data.Model;
 
 namespace TechnicalTest.API.Controllers
 {
+ 
+    
     [Route("api/[controller]")]
     [ApiController]
     public class BankAccountFrozenStatusController : ControllerBase
     {
+        public static object CoreBankAccountFrozenStatusTransferData(BankAccountFrozenStatus bankAccountFrozenStatus) => new
+        {
+            bankAccountFrozenStatus.Id,
+            bankAccountFrozenStatus.Comment,
+            bankAccountFrozenStatus.CreateDate,
+            bankAccountFrozenStatus.CreatedByUserId,
+            bankAccountFrozenStatus.DeleteDate,
+            bankAccountFrozenStatus.DeletedByUserId
+        };
+        
         [HttpPost]
         public IResult Add([FromBody] AddBankAccountFrozenStatusModel frozenStatus)
         {
