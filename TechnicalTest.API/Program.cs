@@ -46,20 +46,6 @@ internal partial class Program
 
         App.MapGet("/", () => "Hello world");
 
-        // SetGetCustomerMapping();
-        // SetAddCustomerMapping();
-        // SetEditCustomerMapping();
-        // SetDeleteCustomerMapping();
-        // SetGetBankAccountMapping();
-        // SetAddBankAccountMapping();
-        // SetEditBankAccountMapping();
-        // SetDeleteBankAccountMapping();
-        // SetGetBankAccountFrozenStatusMapping();
-        // SetAddBankAccountFrozenStatusMapping();
-        // SetDeleteBankAccountFrozenStatusMapping();
-        // SetGetBankAccountTransferMapping();
-        // SetAddBankAccountTransferMapping();
-
         App.Run();
     }
 }

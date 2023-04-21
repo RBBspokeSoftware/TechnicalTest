@@ -1,8 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+using System.Runtime.InteropServices.JavaScript;
 using Microsoft.AspNetCore.Mvc;
 using TechnicalTest.API.Models;
 using TechnicalTest.API.Models.DateAndUser;
@@ -15,7 +11,7 @@ namespace TechnicalTest.API.Controllers
     [ApiController]
     public class BankAccountController : ControllerBase
     {
-        internal static  object CoreBankAccountData(BankAccount bankAccount) => new
+        internal static object CoreBankAccountData(BankAccount bankAccount) => new
         {
             bankAccount.Id,
             bankAccount.AccountNumber,
@@ -28,15 +24,14 @@ namespace TechnicalTest.API.Controllers
             bankAccount.DeleteDate,
             bankAccount.DeletedByUserId
         };
-        
-        #region Get
-        
+
         [HttpGet]
         public IResult Get()
         {
             using var scope = Program.App.Services.CreateScope();
             var db = scope.ServiceProvider.GetRequiredService<ApplicationContext>();
             var bankaccounts = db.BankAccounts.Where(x => x.DeletedByUserId == null).Select(CoreBankAccountData).ToList();
+
             return Results.Ok(bankaccounts);
         }
 
@@ -44,12 +39,12 @@ namespace TechnicalTest.API.Controllers
         [Route("{id}")]
         public IResult Get(int id)
         {
-            using var scope = Program.App.Services.CreateScope();
-            var db = scope.ServiceProvider.GetRequiredService<ApplicationContext>();
+               using var scope = Program.App.Services.CreateScope();
+                        var db = scope.ServiceProvider.GetRequiredService<ApplicationContext>();
             var dbBankAccount = db.BankAccounts.FirstOrDefault(x => x.Id == id);
             return dbBankAccount != null ? Results.Ok(CoreBankAccountData(dbBankAccount)) : Results.NotFound();
         }
-        
+
         [HttpGet]
         [Route("All")]
         public IResult GetAll()
@@ -66,20 +61,22 @@ namespace TechnicalTest.API.Controllers
         {
             using var scope = Program.App.Services.CreateScope();
             var db = scope.ServiceProvider.GetRequiredService<ApplicationContext>();
-            var dbBankAccount = db.BankAccounts.Where(x => x.DeletedByUserId != null).Select(CoreBankAccountData).ToList();
+            var dbBankAccount = db.BankAccounts.Where(x => x.DeletedByUserId != null).Select(CoreBankAccountData)
+                .ToList();
             return Results.Ok(dbBankAccount);
         }
-        
+
         [HttpGet]
         [Route("{id}/FrozenStatus")]
         public IResult GetFrozenStatus(int id)
         {
             using var scope = Program.App.Services.CreateScope();
             var db = scope.ServiceProvider.GetRequiredService<ApplicationContext>();
-            var dbBankAccount = db.BankAccountFrozenStatuses.Where(x => x.DeletedByUserId == null && x.BankAccountId == id).ToList();
+            var dbBankAccount = db.BankAccountFrozenStatuses
+                .Where(x => x.DeletedByUserId == null && x.BankAccountId == id).ToList();
             return dbBankAccount != null ? Results.Ok(dbBankAccount) : Results.NotFound();
         }
-        
+
         [HttpGet]
         [Route("{id}/FrozenStatus/All")]
         public IResult GetFrozenStatusAll(int id)
@@ -89,36 +86,38 @@ namespace TechnicalTest.API.Controllers
             var dbBankAccount = db.BankAccountFrozenStatuses.Where(x => x.BankAccountId == id).ToList();
             return dbBankAccount != null ? Results.Ok(dbBankAccount) : Results.NotFound();
         }
-        
+
         [HttpGet]
         [Route("{id}/FrozenStatus/Deleted")]
         public IResult GetFrozenStatusDeleted(int id)
         {
             using var scope = Program.App.Services.CreateScope();
             var db = scope.ServiceProvider.GetRequiredService<ApplicationContext>();
-            var dbBankAccount = db.BankAccountFrozenStatuses.Where(x => x.DeletedByUserId != null &&x.BankAccountId == id).ToList();
+            var dbBankAccount = db.BankAccountFrozenStatuses
+                .Where(x => x.DeletedByUserId != null && x.BankAccountId == id).ToList();
             return dbBankAccount != null ? Results.Ok(dbBankAccount) : Results.NotFound();
         }
-        
+
         [HttpGet]
         [Route("{id}/transfer")]
         public IResult GetTransfers(int id)
         {
             using var scope = Program.App.Services.CreateScope();
             var db = scope.ServiceProvider.GetRequiredService<ApplicationContext>();
-            var dbBankAccountTransfer = db.BankAccountTransfers.Where(x => x.FromBankAccountId == id).Select(BankAccountTransferController.CoreBankAccountTransferData).ToList();
-        
+            var dbBankAccountTransfer = db.BankAccountTransfers
+                .Where(x => x.FromBankAccountId == id || x.ToBankAccountId == id)
+                .Select(BankAccountTransferController.CoreBankAccountTransferData).ToList();
+
             return Results.Ok(dbBankAccountTransfer);
         }
-        
-        #endregion Get
-        
+
         [HttpPost]
         public IResult Add([FromBody] AddBankAccountModel bankAccount)
         {
             using var scope = Program.App.Services.CreateScope();
             var db = scope.ServiceProvider.GetRequiredService<ApplicationContext>();
-            var dbCustomer = db.BankAccounts.FirstOrDefault(x => x.DeletedByUserId == null && x.Id == bankAccount.CustomerId );
+            var dbCustomer =
+                db.BankAccounts.FirstOrDefault(x => x.DeletedByUserId == null && x.Id == bankAccount.CustomerId);
 
             if (dbCustomer == null)
                 return Results.NotFound();
@@ -141,17 +140,18 @@ namespace TechnicalTest.API.Controllers
         {
             using var scope = Program.App.Services.CreateScope();
             var db = scope.ServiceProvider.GetRequiredService<ApplicationContext>();
-            var dbBankAccount = db.BankAccounts.FirstOrDefault(x =>  x.DeletedByUserId == null && x.Id == bankAccount.Id);
+            var dbBankAccount =
+                db.BankAccounts.FirstOrDefault(x => x.DeletedByUserId == null && x.Id == bankAccount.Id);
 
-            if(dbBankAccount == null)
+            if (dbBankAccount == null)
                 return Results.NotFound();
-                
+
             dbBankAccount.AccountNumber = bankAccount.AccountNumber;
             DateAndUserInfoUpdate.UpdateUpdateInfo(dbBankAccount, Program.UserId);
             db.SaveChangesAsync();
             return Results.Ok();
         }
-        
+
         [HttpPost]
         [Route("Delete")]
         public IResult Delete([FromBody] int id)

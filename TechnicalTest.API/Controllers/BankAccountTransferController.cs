@@ -18,8 +18,10 @@ namespace TechnicalTest.API.Controllers
         public static object CoreBankAccountTransferData(BankAccountTransfer bankAccountTransfer) => new
         {
             bankAccountTransfer.Id,
-            bankAccountTransfer.Amount,
             bankAccountTransfer.Reference,
+            bankAccountTransfer.FromBankAccountId,
+            bankAccountTransfer.ToBankAccountId,
+            bankAccountTransfer.Amount,
             bankAccountTransfer.CreateDate,
             bankAccountTransfer.CreatedByUserId
         };
@@ -29,7 +31,6 @@ namespace TechnicalTest.API.Controllers
         {
             using var scope = Program.App.Services.CreateScope();
             var db = scope.ServiceProvider.GetRequiredService<ApplicationContext>();
-
             if(bankAccountTransfer.FromBankAccountId == bankAccountTransfer.ToBankAccountId || bankAccountTransfer.Amount <= 0)
                 return Results.BadRequest();
             
