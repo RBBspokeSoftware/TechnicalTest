@@ -100,6 +100,17 @@ namespace TechnicalTest.API.Controllers
             return dbBankAccount != null ? Results.Ok(dbBankAccount) : Results.NotFound();
         }
         
+        [HttpGet]
+        [Route("{id}/transfer")]
+        public IResult GetTransfers(int id)
+        {
+            using var scope = Program.App.Services.CreateScope();
+            var db = scope.ServiceProvider.GetRequiredService<ApplicationContext>();
+            var dbBankAccountTransfer = db.BankAccountTransfers.Where(x => x.FromBankAccountId == id).Select(BankAccountTransferController.CoreBankAccountTransferData).ToList();
+        
+            return Results.Ok(dbBankAccountTransfer);
+        }
+        
         #endregion Get
         
         [HttpPost]
