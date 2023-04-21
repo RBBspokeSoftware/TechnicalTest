@@ -17,11 +17,11 @@ internal partial class Program
             customer.DateOfBirth,
             customer.DailyTransferLimit,
             customer.CreateDate,
-            CreatedByUserID = customer.CreatedByUserId,
+            customer.CreatedByUserId,
             customer.UpdateDate,
             customer.UpdatedByUserId,
             customer.DeleteDate,
-            DeletedByUserID = customer.DeletedByUserId
+            customer.DeletedByUserId
         };
 
         App.MapGet("/customer", (ApplicationContext db) =>

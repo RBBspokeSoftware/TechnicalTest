@@ -15,11 +15,11 @@ internal partial class Program
             bankAccount.CustomerId,
             bankAccount.Balance,
             bankAccount.CreateDate,
-            CreatedByUserID = bankAccount.CreatedByUserId,
+            bankAccount.CreatedByUserId,
             bankAccount.UpdateDate,
             bankAccount.UpdatedByUserId,
             bankAccount.DeleteDate,
-            DeletedByUserID = bankAccount.DeletedByUserId
+            bankAccount.DeletedByUserId
         };
 
         App.MapGet("/bankaccount", (ApplicationContext db) =>

@@ -7,3 +7,5 @@ public record EditCustomerModel(int Id, string FirstName, string MiddleNames, st
 public record AddBankAccountModel(int CustomerId, string AccountNumber, decimal Balance);
 
 public record EditBankAccountModel(int Id, string AccountNumber);
+
+public record AddBankAccountFrozenStatusModel(int CustomerId, string AccountNumber, decimal Balance);
