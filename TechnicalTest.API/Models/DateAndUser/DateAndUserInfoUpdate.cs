@@ -4,23 +4,23 @@ namespace TechnicalTest.API.Models.DateAndUser
 {
     public static class DateAndUserInfoUpdate
     {
-        public static BaseModelCreate<T> UpdateCreateInfo<T>(BaseModelCreate<T> obj, int userId) 
+        public static IModelCreateInfo UpdateCreateInfo(IModelCreateInfo obj, int userId) 
         {
             obj.CreateDate =  DateTime.Now;
-            obj.CreatedByUserID  = userId;
+            obj.CreatedByUserId  = userId;
             return obj;
         }
 
-        public static BaseModel<T> UpdateUpdateInfo<T>(BaseModel<T> obj, int userId) 
+        public static IModelUpdateInfo UpdateUpdateInfo(IModelUpdateInfo obj, int userId) 
         {
             obj.UpdateDate = DateTime.Now;
-            obj.UpdatedByUserID = userId;
+            obj.UpdatedByUserId = userId;
             return obj;
         }
-        public static BaseModel<T> UpdateDeleteInfo<T>(BaseModel<T> obj, int userId) 
+        public static IModelDeleteInfo UpdateDeleteInfo(IModelDeleteInfo obj, int userId) 
         {
-            obj.DeleteDate = obj.UpdateDate = DateTime.Now;
-            obj.DeletedByUserID = obj.UpdatedByUserID = userId;
+            obj.DeleteDate = DateTime.Now;
+            obj.DeletedByUserId = userId;
             return obj;
         }
     }

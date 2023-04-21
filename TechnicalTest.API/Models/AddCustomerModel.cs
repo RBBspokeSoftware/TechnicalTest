@@ -4,6 +4,6 @@ public record AddCustomerModel(string FirstName, string MiddleNames, string Last
 
 public record EditCustomerModel(int Id, string FirstName, string MiddleNames, string LastName, DateTime DateOfBirth, decimal DailyTransferLimit);
 
-public record AddBankAccount(int CustomerId, string AccountNumber, decimal Balance);
+public record AddBankAccountModel(int CustomerId, string AccountNumber, decimal Balance);
 
-public record EditBankAccount(int Id, string AccountNumber);
+public record EditBankAccountModel(int Id, string AccountNumber);

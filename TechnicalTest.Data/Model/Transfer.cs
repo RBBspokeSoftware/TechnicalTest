@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace TechnicalTest.Data.Model
 {
-    public class Transfer : BaseModelCreate<int>
+    public class Transfer : BaseCreateModel<int>
     {
     }
 }

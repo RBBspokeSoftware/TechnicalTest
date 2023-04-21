@@ -1,6 +1,6 @@
 ﻿namespace TechnicalTest.Data.Model;
 
-public class BankAccount : BaseModel<int>
+public class BankAccount : BaseUpdateAndDeleteModel<int>
 {
     public int CustomerId { get; set; }
     public Customer? Customer { get; set; }

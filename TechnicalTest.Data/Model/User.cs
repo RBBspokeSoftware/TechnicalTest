@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace TechnicalTest.Data.Model
 {
-    public  class User : BaseModel<int>
+    public  class User : BaseUpdateAndDeleteModel<int>
     {
         public required string FirstName { get; set; }
         public string MiddleNames { get; set; }

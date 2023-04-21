@@ -1,6 +1,6 @@
 ﻿namespace TechnicalTest.Data.Model;
 
-public class Customer : BaseModel<int>
+public class Customer : BaseUpdateAndDeleteModel<int>
 {
     public required string FirstName { get; set; }
     public string MiddleNames { get; set; }
