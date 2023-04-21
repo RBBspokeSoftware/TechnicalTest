@@ -59,7 +59,7 @@ internal partial class Program
     {
         App.MapPost("/bankaccount", async ([FromBody] AddBankAccountModel bankAccount, ApplicationContext db) =>
         {
-            var dbCustomer = db.Customers.FirstOrDefault(x => x.DeletedByUserId == null && x.Id == bankAccount.CustomerId );
+            var dbCustomer = db.BankAccounts.FirstOrDefault(x => x.DeletedByUserId == null && x.Id == bankAccount.CustomerId );
 
             if (dbCustomer == null)
                 return Results.NotFound();

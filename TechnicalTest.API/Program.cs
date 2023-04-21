@@ -54,6 +54,11 @@ internal partial class Program
         SetAddBankAccountMapping();
         SetEditBankAccountMapping();
         SetDeleteBankAccountMapping();
+        SetGetBankAccountFrozenStatusMapping();
+        SetAddBankAccountFrozenStatusMapping();
+        SetDeleteBankAccountFrozenStatusMapping();
+        SetGetBankAccountTransferMapping();
+        SetAddBankAccountTransferMapping();
 
         App.Run();
     }

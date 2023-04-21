@@ -17,5 +17,7 @@ public class ApplicationContext : DbContext
     //public DbSet<Transfer> Transfers { get; set; } = null!;
 
     public DbSet<BankAccount> BankAccounts { get; set; } = null!;
-    public DbSet<BankAccountFrozenStatus> BankAccountFrozenStatus { get; set; } = null!;
+    public DbSet<BankAccountFrozenStatus> BankAccountFrozenStatuses { get; set; } = null!;
+    public DbSet<BankAccountTransfer> BankAccountTransfers { get; set; } = null!;
+ 
 }
